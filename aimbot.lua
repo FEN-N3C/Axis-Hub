@@ -72,23 +72,23 @@ end
 
 -- ===== Main Loop =====
 
-function Aimbot.Start(Config)
-	RunService.RenderStepped:Connect(function()
-		-- must be enabled AND holding key
-		if not Config.Enabled or not Config.HoldingKey then return end
-		if not LocalPlayer.Character then return end
+function Aimbot.Start(Config, Options)
+    RunService.RenderStepped:Connect(function()
+        if not Config.Enabled then return end
+        if not Options.AimKey:GetState() then return end
+        if not LocalPlayer.Character then return end
 
-		local target = GetClosestTarget(Config)
-		if not target then return end
+        local target = GetClosestTarget(Config)
+        if not target then return end
 
-		local velocity = target.AssemblyLinearVelocity
-		local predictedPosition = target.Position + (velocity * Config.Prediction)
+        local velocity = target.AssemblyLinearVelocity
+        local predictedPosition = target.Position + (velocity * Config.Prediction)
 
-		Camera.CFrame = CFrame.new(
-			Camera.CFrame.Position,
-			predictedPosition
-		)
-	end)
+        Camera.CFrame = CFrame.new(
+            Camera.CFrame.Position,
+            predictedPosition
+        )
+    end)
 end
 
 return Aimbot
