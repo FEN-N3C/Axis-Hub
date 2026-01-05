@@ -10,6 +10,10 @@ local Mouse = LocalPlayer:GetMouse()
 
 local Fluent = getgenv().Fluent
 
+local deltaTime = 0
+local lastSwitch = 0
+local currentPart = "HumanoidRootPart"
+
 -- ===== Utility =====
 
 local function IsAlive(character)
@@ -45,7 +49,7 @@ local function GetClosestTarget(Config)
 		if not char then continue end
 		if Config.DeadCheck and not IsAlive(char) then continue end
 
-		local root = char:FindFirstChild("HumanoidRootPart")
+		local root = GetTargetPart(char, Config, RunService.RenderStepped:Wait())
 		if not root then continue end
 
 		if Config.WallCheck then
@@ -74,23 +78,22 @@ end
 
 -- ===== Main Loop =====
 
-function Aimbot.Start(Config, Options)
-    RunService.RenderStepped:Connect(function()
-        if not Config.Enabled then return end
-        if not Options.AimKey:GetState() then return end
-        if not LocalPlayer.Character then return end
+RunService.RenderStepped:Connect(function(dt)
+    deltaTime = dt
+    if not Config.Enabled then return end
+    if not Options.AimKey:GetState() then return end
+    if not LocalPlayer.Character then return end
 
-        local target = GetClosestTarget(Config)
-        if not target then return end
+    local target = GetClosestTarget(Config, deltaTime) -- pass deltaTime if needed
+    if not target then return end
 
-        local velocity = target.AssemblyLinearVelocity
-        local predictedPosition = target.Position + (velocity * Config.Prediction)
+    local velocity = target.AssemblyLinearVelocity
+    local predictedPosition = target.Position + (velocity * Config.Prediction)
 
-        Camera.CFrame = CFrame.new(
-            Camera.CFrame.Position,
-            predictedPosition
-        )
-    end)
-end
+    Camera.CFrame = CFrame.new(
+        Camera.CFrame.Position,
+        predictedPosition
+    )
+end)
 
 return Aimbot
