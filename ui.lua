@@ -103,7 +103,40 @@ function UI.Init(Config)
     end)
     LockDropdown:SetValue(Config.LockType)
 
-    -- Hand Fluent over to SaveManager + InterfaceManager
+    -- Lock Part Dropdown
+    local PartDropdown = Tabs.Main:AddDropdown("LockPart", {
+        Title = "Lock Part",
+        Values = { "HumanoidRootPart", "Head" },
+        Multi = false,
+        Default = Config.LockPart == "HumanoidRootPart" and 1 or 2
+    })
+    PartDropdown:OnChanged(function(v)
+        Config.LockPart = v
+    end)
+    PartDropdown:SetValue(Config.LockPart)
+
+    local RandomToggle = Tabs.Main:AddToggle("RandomizePart", {
+        Title = "Randomize Part",
+        Default = Config.RandomizePart
+    })
+    RandomToggle:OnChanged(function(v)
+        Config.RandomizePart = v
+    end)
+    Options.RandomizePart:SetValue(Config.RandomizePart)
+
+    local RandomInterval = Tabs.Main:AddSlider("RandomizeInterval", {
+        Title = "Randomize Interval",
+        Description = "Seconds between random part switches",
+        Min = 0.1,
+        Max = 5,
+        Rounding = 1,
+        Default = Config.RandomizeInterval
+    })
+    RandomInterval:OnChanged(function(v)
+        Config.RandomizeInterval = v
+    end)
+    RandomInterval:SetValue(Config.RandomizeInterval)
+    
     SaveManager:SetLibrary(Fluent)
     InterfaceManager:SetLibrary(Fluent)
 
