@@ -8,6 +8,8 @@ local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
+local Fluent = getgenv().Fluent
+
 -- ===== Utility =====
 
 local function IsAlive(character)
