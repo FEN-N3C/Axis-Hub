@@ -9,6 +9,6 @@ local UI = Load("ui.lua")
 local Aimbot = Load("aimbot.lua")
 
 UI.Init(Config)
-Aimbot.Start(Config)
+Aimbot.Start(Config, Fluent.Options)
 
 print("loaded fine")
