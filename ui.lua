@@ -1,7 +1,7 @@
 local UI = {}
 
 local Fluent = loadstring(game:HttpGet(
-	"https://raw.githubusercontent.com/dawid-scripts/Fluent/master/main.lua"
+	"https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
 ))()
 
 function UI.Init(Config)
