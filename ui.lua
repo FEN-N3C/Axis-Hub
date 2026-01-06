@@ -48,7 +48,13 @@ function UI.Init(Config)
 
     AimbotKeybind:OnChanged(function()
         local newState = not Config.Enabled
-        Toggle:SetValue(newState)
+        Toggle:SetValue(newState) -- updates both UI and Config
+
+        Fluent:Notify({
+            Title = "Aimbot",
+            Content = newState and "Enabled" or "Disabled",
+            Duration = 1.5
+        })
     end)
 
     local TeamToggle = Tabs.Main:AddToggle("TeamCheck", {
