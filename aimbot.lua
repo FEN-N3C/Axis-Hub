@@ -19,6 +19,10 @@ local function IsAlive(character)
     return hum and hum.Health > 0
 end
 
+local function IsFriend(player)
+    return LocalPlayer:IsFriendsWith(player.UserId)
+end
+
 local function GetRayOrigin()
     return Camera.CFrame.Position + (Camera.CFrame.LookVector * 0.1)
 end
@@ -78,6 +82,7 @@ local function GetClosestTarget(Config)
     for _, player in ipairs(Players:GetPlayers()) do
         if player == LocalPlayer then continue end
         if Config.TeamCheck and player.Team == LocalPlayer.Team then continue end
+        if Config.FriendCheck and IsFriend(player) then continue end
 
         local char = player.Character
         if not char then continue end
