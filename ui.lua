@@ -1,4 +1,5 @@
--- ui.lua
+local UserInputService = game:GetService("UserInputService")
+
 local UI = {}
 
 -- Load Fluent and Addons
@@ -48,19 +49,25 @@ function UI.Init(Config)
 
     local AimbotKeybind = Tabs.Main:AddKeybind("AimbotToggleKey", {
         Title = "Toggle Aimbot",
-        Mode = "Toggle",
+        Mode = "None",
         Default = "None",
     })
 
-    AimbotKeybind:OnChanged(function()
-        local newState = not Config.Enabled
-        Toggle:SetValue(newState) -- updates both UI and Config
-
-        Fluent:Notify({
-            Title = "Aimbot",
-            Content = newState and "Enabled" or "Disabled",
-            Duration = 1.5
-        })
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if not AimbotKeybind:GetKey() then return end
+    
+        -- Check if pressed key matches the keybind
+        if input.KeyCode == AimbotKeybind:GetKey() then
+            local newState = not Config.Enabled
+            Toggle:SetValue(newState) -- updates both UI and Config
+    
+            Fluent:Notify({
+                Title = "Aimbot",
+                Content = newState and "Enabled" or "Disabled",
+                Duration = 1.5
+            })
+        end
     end)
 
     local TeamToggle = Tabs.Main:AddToggle("TeamCheck", {
