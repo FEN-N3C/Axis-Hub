@@ -14,18 +14,29 @@ local function IsAlive(character)
     return hum and hum.Health > 0
 end
 
-local function IsVisible(origin, targetPart, targetCharacter)
+local function GetRayOrigin()
+    return Camera.CFrame.Position + (Camera.CFrame.LookVector * 0.1)
+end
+
+local function IsVisible(targetPart, targetCharacter)
+    local origin = Camera.CFrame.Position + (Camera.CFrame.LookVector * 0.1)
+    local direction = targetPart.Position - origin
+
     local params = RaycastParams.new()
     params.FilterType = Enum.RaycastFilterType.Exclude
     params.FilterDescendantsInstances = {
         LocalPlayer.Character,
         targetCharacter
     }
+    params.IgnoreWater = true
 
-    local direction = targetPart.Position - origin
     local result = workspace:Raycast(origin, direction, params)
 
-    return result == nil
+    if not result then
+        return true
+    end
+
+    return result.Instance:IsDescendantOf(targetCharacter)
 end
 
 local function WorldToScreen(pos)
@@ -59,7 +70,7 @@ local function GetClosestTarget(Config)
         local part = GetTargetPart(char, Config)
         if not part then continue end
 
-        if Config.WallCheck and not IsVisible(Camera.CFrame.Position, part, char) then
+        if Config.WallCheck and not IsVisible(part, char) then
             continue
         end
 
