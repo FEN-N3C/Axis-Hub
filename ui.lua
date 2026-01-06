@@ -47,8 +47,8 @@ function UI.Init(Config)
     end)
 
     local AimbotKeybind = Tabs.Main:AddKeybind("AimbotToggleKey", {
-        Title = "Aimbot Key",
-        Mode = "Toggle",
+        Title = "Toggle Aimbot",
+        Mode = "Press",
         Default = "None",
     })
 
