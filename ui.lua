@@ -31,28 +31,6 @@ function UI.Init(Config)
     }
 
     local Options = Fluent.Options
-
-    local AimbotKeybind = Tabs.Main:AddKeybind("AimbotToggleKey", {
-        Title = "Aimbot Toggle Key",
-        Description = "Enable / Disable aimbot",
-        Mode = "Hold",
-        Default = "None",
-    })
-
-
-    AimbotKeybind:OnChanged(function(pressed)
-        if not pressed then return end
-
-        local newState = not Config.Enabled
-        Config.Enabled = newState
-        Options.Enabled:SetValue(newState)
-
-        Fluent:Notify({
-            Title = "Aimbot",
-            Content = newState and "Enabled" or "Disabled",
-            Duration = 1.5
-        })
-    end)
     
     local Toggle = Tabs.Main:AddToggle("Enabled", {
         Title = "Aimbot",
@@ -63,7 +41,25 @@ function UI.Init(Config)
     end)
     Options.Enabled:SetValue(Config.Enabled)
 
-    -- TeamCheck Toggle
+    local AimbotKeybind = Tabs.Main:AddKeybind("AimbotToggleKey", {
+        Title = "Aimbot Key",
+        Mode = "Hold",
+        Default = "None",
+    })
+
+    AimbotKeybind:OnChanged(function(pressed)
+        if not pressed then return end
+    
+        local newState = not Config.Enabled
+        Toggle:SetValue(newState) -- THIS updates UI + Config
+
+        Fluent:Notify({
+            Title = "Aimbot",
+            Content = newState and "Enabled" or "Disabled",
+            Duration = 1.5
+        })
+    end)
+
     local TeamToggle = Tabs.Main:AddToggle("TeamCheck", {
         Title = "Team Check",
         Description = "Don't toggle if teams are not present",
