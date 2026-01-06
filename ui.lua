@@ -42,7 +42,7 @@ function UI.Init(Config)
         Title = "Aimbot Key",
         Description = "Toggles aimbot",
         Mode = "Toggle",
-        Default = nil 
+        Default = "None",
     })
 
     DisableKeybind:OnChanged(function()
