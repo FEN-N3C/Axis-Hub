@@ -50,6 +50,7 @@ function UI.Init(Config)
     -- TeamCheck Toggle
     local TeamToggle = Tabs.Main:AddToggle("TeamCheck", {
         Title = "Team Check",
+        Description = "Don't toggle if teams are not present",
         Default = Config.TeamCheck
     })
     TeamToggle:OnChanged(function(v)
