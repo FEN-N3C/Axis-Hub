@@ -7,6 +7,11 @@ local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
+local lastPartSwitch = 0
+local currentRandomPart = "HumanoidRootPart"
+
+local PARTS = { "HumanoidRootPart", "Head" }
+
 -- ===== Utility =====
 
 local function IsAlive(character)
@@ -47,10 +52,21 @@ end
 -- ===== Target Part Selection =====
 
 local function GetTargetPart(character, Config)
-    if Config.LockPart == "Head" then
-        return character:FindFirstChild("Head")
+    local partName = Config.LockPart
+
+    if Config.RandomizePart then
+        local now = os.clock()
+
+        if now - lastPartSwitch >= Config.RandomizeInterval then
+            lastPartSwitch = now
+            partName = PARTS[math.random(#PARTS)]
+            currentRandomPart = partName
+        else
+            partName = currentRandomPart
+        end
     end
-    return character:FindFirstChild("HumanoidRootPart")
+
+    return character:FindFirstChild(partName)
 end
 
 -- ===== Target Selection =====
