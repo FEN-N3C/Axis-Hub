@@ -6,6 +6,7 @@
 - Team check
 - Dead check
 - Wall check
+- Friend check
 - Prediction system
 - Lock type
 - Lock part
