@@ -2,7 +2,6 @@ local UserInputService = game:GetService("UserInputService")
 
 local UI = {}
 
--- Load Fluent and Addons
 local Fluent = loadstring(game:HttpGet(
     "https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"
 ))()
@@ -16,7 +15,7 @@ local InterfaceManager = loadstring(game:HttpGet(
 function UI.Init(Config)
     local Window = Fluent:CreateWindow({
         Title = "AxisHub",
-        SubTitle = "V1.0.0-B",
+        SubTitle = "V1.0.0-A",
         Size = UDim2.fromOffset(580, 460),
         Theme = "Dark",
         Acrylic = true,
@@ -24,7 +23,6 @@ function UI.Init(Config)
         MinimizeKey = Enum.KeyCode.LeftControl
     })
 
-    -- Create Tabs
     local Tabs = {
         Main = Window:AddTab({ Title = "Aimbot", Icon = "crosshair" }),
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
@@ -46,6 +44,7 @@ function UI.Init(Config)
         Config.Enabled = v
     end)
 
+    -- i gonna kill myself bro
     --local AimbotKeybind = Tabs.Main:AddKeybind("AimbotToggleKey", {
         --Title = "Toggle Aimbot",
         --Mode = "Press",  -- triggers callback on each key press
@@ -72,7 +71,6 @@ function UI.Init(Config)
         Config.TeamCheck = v
     end)
 
-    -- DeadCheck Toggle
     local DeadToggle = Tabs.Main:AddToggle("DeadCheck", {
         Title = "Dead Check",
         Default = Config.DeadCheck
@@ -81,7 +79,6 @@ function UI.Init(Config)
         Config.DeadCheck = v
     end)
 
-    -- WallCheck Toggle
     local WallToggle = Tabs.Main:AddToggle("WallCheck", {
         Title = "Wall Check",
         Default = Config.WallCheck
@@ -112,7 +109,6 @@ function UI.Init(Config)
     end)
     PredictionSlider:SetValue(Config.Prediction)
 
-    -- LockType Dropdown
     local LockDropdown = Tabs.Main:AddDropdown("LockType", {
         Title = "Lock Type",
         Values = { "ClosestToCursor", "ClosestToPlayer" },
@@ -124,7 +120,6 @@ function UI.Init(Config)
     end)
     LockDropdown:SetValue(Config.LockType)
 
-    -- Lock Part Dropdown
     local PartDropdown = Tabs.Main:AddDropdown("LockPart", {
         Title = "Lock Part",
         Values = { "HumanoidRootPart", "Head" },
@@ -169,10 +164,8 @@ function UI.Init(Config)
     InterfaceManager:BuildInterfaceSection(Tabs.Settings)
     SaveManager:BuildConfigSection(Tabs.Settings)
 
-    -- Select first tab by default
     Window:SelectTab(1)
 
-    -- Notify user
     Fluent:Notify({
         Title = "AxisHub",
         Content = "UI loaded successfully!",
