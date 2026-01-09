@@ -19,6 +19,17 @@ if FOVCircle then
     FOVCircle.NumSides = 64
 end
 
+local function UpdateFOV(Config)
+    if not FOVCircle then return end
+
+    FOVCircle.Visible = Config.FOVVisible
+    FOVCircle.Position = Vector2.new(Mouse.X, Mouse.Y)
+    FOVCircle.Radius = Config.FOVRadius
+    FOVCircle.Thickness = Config.FOVThickness
+    FOVCircle.Transparency = math.clamp(Config.FOVOpacity or 1, 0, 1)
+    FOVCircle.Color = Config.FOVColor
+end
+
 local function IsInsideFOV(screenPos, radius)
     local mousePos = Vector2.new(Mouse.X, Mouse.Y)
     return (screenPos - mousePos).Magnitude <= radius
@@ -126,19 +137,12 @@ end
 
 function Aimbot.Start(Config, Options)
     RunService.RenderStepped:Connect(function()
+        UpdateFOV(Config)
+
         if not Config.Enabled then return end
         if not Options.AimKey:GetState() then return end
         if not LocalPlayer.Character then return end
 
-        if FOVCircle then
-            FOVCircle.Visible = Config.FOVVisible
-            FOVCircle.Position = Vector2.new(Mouse.X, Mouse.Y)
-            FOVCircle.Radius = Config.FOVRadius
-            FOVCircle.Thickness = Config.FOVThickness
-            FOVCircle.Transparency = math.clamp(tonumber(Config.FOVOpacity) or 1, 0, 1)
-            FOVCircle.Color = Config.FOVColor
-        end
-         
         local target = GetClosestTarget(Config)
         if not target then return end
 
