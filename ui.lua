@@ -154,7 +154,7 @@ function UI.Init(Config)
     RandomInterval:SetValue(Config.RandomizeInterval)
 
     local FOVToggle = Tabs.FOV:AddToggle("FOVEnabled", {
-        Title = "Enable FOV Lock",
+        Title = "Enable FOV",
         Description = "Only lock onto players inside FOV",
         Default = Config.FOVEnabled
     })
@@ -163,7 +163,7 @@ function UI.Init(Config)
     end)
 
     local FOVVisualToggle = Tabs.FOV:AddToggle("FOVVisible", {
-        Title = "Show FOV Circle",
+        Title = "Visual FOV",
         Default = Config.FOVVisible
     })
     FOVVisualToggle:OnChanged(function(v)
@@ -171,18 +171,18 @@ function UI.Init(Config)
     end)
 
     local FOVRadiusSlider = Tabs.FOV:AddSlider("FOVRadius", {
-        Title = "FOV Radius",
+        Title = "Radius",
         Min = 25,
         Max = 500,
         Rounding = 0,
         Default = Config.FOVRadius
     })
-    FOVRadiusSlider:OnChanged(function(v)
-        Config.FOVRadius = v
+    FOVOpacitySlider:OnChanged(function(v)
+        Config.FOVOpacity = tonumber(v) or 1
     end)
 
     local FOVThicknessSlider = Tabs.FOV:AddSlider("FOVThickness", {
-        Title = "FOV Thickness",
+        Title = "Thickness",
         Min = 1,
         Max = 10,
         Rounding = 0,
@@ -193,7 +193,7 @@ function UI.Init(Config)
     end)
 
     local FOVOpacitySlider = Tabs.FOV:AddSlider("FOVOpacity", {
-        Title = "FOV Opacity",
+        Title = "Opacity",
         Min = 0,
         Max = 1,
         Rounding = 2,
@@ -204,7 +204,7 @@ function UI.Init(Config)
     end)
 
     local FOVColorPicker = Tabs.FOV:AddColorpicker("FOVColor", {
-        Title = "FOV Color",
+        Title = "Color",
         Default = Config.FOVColor
     })
     FOVColorPicker:OnChanged(function(v)
