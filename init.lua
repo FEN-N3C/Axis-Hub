@@ -1,4 +1,4 @@
-local BASE = "https://raw.githubusercontent.com/FEN-N3C/Axis-Hub/main/"
+local BASE = "https://raw.githubusercontent.com/FEN-N3C/StructraHub/main/"
 
 local function Load(file)
 	return loadstring(game:HttpGet(BASE .. file))()
@@ -11,4 +11,4 @@ local Aimbot = Load("aimbot.lua")
 UI.Init(Config)
 Aimbot.Start(Config, Fluent.Options)
 
-print("Successfully loaded AxisHub (V1.0.0-A)!")
+print("Successfully loaded StructraHub (V1.0.0)!")
