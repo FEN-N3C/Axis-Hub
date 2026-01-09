@@ -11,6 +11,18 @@ local lastPartSwitch = 0
 local currentRandomPart = "HumanoidRootPart"
 
 local PARTS = { "HumanoidRootPart", "Head" }
+local Drawing = Drawing or nil
+
+local FOVCircle = Drawing and Drawing.new("Circle")
+if FOVCircle then
+    FOVCircle.Filled = false
+    FOVCircle.NumSides = 64
+end
+
+local function IsInsideFOV(screenPos, radius)
+    local mousePos = Vector2.new(Mouse.X, Mouse.Y)
+    return (screenPos - mousePos).Magnitude <= radius
+end
 
 local function IsAlive(character)
     local hum = character:FindFirstChildOfClass("Humanoid")
@@ -95,6 +107,11 @@ local function GetClosestTarget(Config)
         else
             local screenPos, onScreen = WorldToScreen(part.Position)
             if not onScreen then continue end
+
+            if Config.FOVEnabled and not IsInsideFOV(screenPos, Config.FOVRadius) then
+                continue
+            end
+
             distance = (screenPos - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
         end
 
@@ -113,6 +130,15 @@ function Aimbot.Start(Config, Options)
         if not Options.AimKey:GetState() then return end
         if not LocalPlayer.Character then return end
 
+        if FOVCircle then
+            FOVCircle.Visible = Config.FOVVisible
+            FOVCircle.Position = Vector2.new(Mouse.X, Mouse.Y)
+            FOVCircle.Radius = Config.FOVRadius
+            FOVCircle.Thickness = Config.FOVThickness
+            FOVCircle.Transparency = Config.FOVOpacity
+            FOVCircle.Color = Config.FOVColor
+        end
+         
         local target = GetClosestTarget(Config)
         if not target then return end
 
