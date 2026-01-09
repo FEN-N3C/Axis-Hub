@@ -14,8 +14,8 @@ local InterfaceManager = loadstring(game:HttpGet(
 
 function UI.Init(Config)
     local Window = Fluent:CreateWindow({
-        Title = "AxisHub",
-        SubTitle = "V1.0.0-A",
+        Title = "StructraHub",
+        SubTitle = "V1.0.0",
         Size = UDim2.fromOffset(580, 460),
         Theme = "Dark",
         Acrylic = true,
@@ -158,8 +158,8 @@ function UI.Init(Config)
     SaveManager:IgnoreThemeSettings()
     SaveManager:SetIgnoreIndexes({})
 
-    InterfaceManager:SetFolder("AxisHub")
-    SaveManager:SetFolder("AxisHub/GameConfig")
+    InterfaceManager:SetFolder("StructraHub")
+    SaveManager:SetFolder("StructraHub/GameConfig")
 
     InterfaceManager:BuildInterfaceSection(Tabs.Settings)
     SaveManager:BuildConfigSection(Tabs.Settings)
@@ -167,7 +167,7 @@ function UI.Init(Config)
     Window:SelectTab(1)
 
     Fluent:Notify({
-        Title = "AxisHub",
+        Title = "StructraHub",
         Content = "UI loaded successfully!",
         Duration = 5
     })
