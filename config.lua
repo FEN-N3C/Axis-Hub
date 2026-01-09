@@ -14,9 +14,9 @@ local Config = {
     -- FOV
     FOVEnabled = false,
     FOVVisible = false,
-    FOVRadius = 70,
+    FOVRadius = 120,
     FOVThickness = 2,
-    FOVOpacity = 0,
+    FOVOpacity = 1,
     FOVColor = Color3.fromRGB(255, 255, 255)
 
     }
