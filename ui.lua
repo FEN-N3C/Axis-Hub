@@ -177,8 +177,8 @@ function UI.Init(Config)
         Rounding = 0,
         Default = Config.FOVRadius
     })
-    FOVOpacitySlider:OnChanged(function(v)
-        Config.FOVOpacity = tonumber(v) or 1
+    FOVRadiusSlider:OnChanged(function(v)
+        Config.FOVRadius = tonumber(v)
     end)
 
     local FOVThicknessSlider = Tabs.FOV:AddSlider("FOVThickness", {
@@ -189,7 +189,7 @@ function UI.Init(Config)
         Default = Config.FOVThickness
     })
     FOVThicknessSlider:OnChanged(function(v)
-        Config.FOVThickness = v
+        Config.FOVThickness = tonumber(v)
     end)
 
     local FOVOpacitySlider = Tabs.FOV:AddSlider("FOVOpacity", {
@@ -200,7 +200,7 @@ function UI.Init(Config)
         Default = Config.FOVOpacity
     })
     FOVOpacitySlider:OnChanged(function(v)
-        Config.FOVOpacity = v
+        Config.FOVOpacity = tonumber(v) or 1
     end)
 
     local FOVColorPicker = Tabs.FOV:AddColorpicker("FOVColor", {
