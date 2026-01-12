@@ -27,7 +27,6 @@ local Config = {
     ESPDistance = false,
     ESPTracers = false,
     ESPHeadbox = false,
-    
-    }
+}
 
 return Config
