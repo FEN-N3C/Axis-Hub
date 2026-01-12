@@ -1,3 +1,5 @@
+local MODE = "DEV"
+
 local BRANCH = (MODE == "DEV") and "dev" or "main"
 local VERSION = (MODE == "DEV") and "V1.2.0" or "V1.1.0"
 
