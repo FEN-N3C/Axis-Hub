@@ -89,6 +89,14 @@ function UI.Init(Config)
         Config.WallCheck = v
     end)
 
+    local FFToggle = Tabs.Main:AddToggle("ForceFieldCheck", {
+        Title = "ForceField Check",
+        Default = Config.ForceFieldCheck
+    })
+    FFToggle:OnChanged(function(v)
+        Config.ForceFieldCheck = v
+    end)
+
     local FriendToggle = Tabs.Main:AddToggle("FriendCheck", {
         Title = "Friend Check",
         Default = Config.FriendCheck
