@@ -3,6 +3,7 @@ local Config = {
     Enabled = false,
     TeamCheck = false,
     DeadCheck = false,
+    ForcefieldCheck = false,
     WallCheck = false,
     FriendCheck = false,
     Prediction = 0,
