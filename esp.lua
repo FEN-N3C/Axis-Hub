@@ -104,13 +104,24 @@ function ESP.Start(Config)
     RunService.RenderStepped:Connect(function()
         for _, player in ipairs(Players:GetPlayers()) do
             if player == LocalPlayer then
-                Clear(player)
                 continue
             end
 
             local char = player.Character
-            if not Config.ESPEnabled or not char or not CharacterAlive(char) then
+            if not char or not CharacterAlive(char) then
                 Clear(player)
+                continue
+            end
+
+            if not Objects[player] then
+                Create(player)
+            end
+
+            -- If ESP is disabled, just hide everything
+            if not Config.ESPEnabled then
+                for _, obj in pairs(Objects[player]) do
+                    obj.Visible = false
+                end
                 continue
             end
 
@@ -180,6 +191,10 @@ function ESP.Start(Config)
             headbox.Position = Vector2.new(headPos.X, headPos.Y)
         end
     end)
+    Players.PlayerRemoving:Connect(function(player)
+    Clear(player)
+end)
+
 end
 
 return ESP
