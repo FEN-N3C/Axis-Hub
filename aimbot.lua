@@ -39,7 +39,7 @@ local function UpdateFOV(Config)
     FOVCircle.Visible = Config.FOVEnabled and Config.FOVVisible
     FOVCircle.Position = mousePos
     FOVCircle.Radius = Config.FOVRadius
-    FOVCircle.Thickness = Config.FOVThickness
+    FOVCircle.Thickness = math.clamp(tonumber(Config.FOVThickness) or 1, 1, 10)
     FOVCircle.Transparency = math.clamp(Config.FOVOpacity or 1, 0, 1)
     FOVCircle.Color = Config.FOVColor
 end
