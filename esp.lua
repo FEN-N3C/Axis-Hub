@@ -41,6 +41,8 @@ local function Create(player)
             Thickness = 1,
             Filled = false,
             Color = Color3.fromRGB(255, 255, 255),
+            Transparency = 1,
+            ZIndex = 2,
             Visible = false
         }),
 
@@ -48,13 +50,19 @@ local function Create(player)
             Size = 13,
             Center = true,
             Outline = true,
+            OutlineColor = Color3.fromRGB(0, 0, 0),
+            Font = 2,
             Color = Color3.fromRGB(255, 255, 255),
+            Transparency = 1,
+            ZIndex = 3,
             Visible = false
         }),
 
         HealthBar = NewDrawing("Line", {
             Thickness = 2,
             Color = Color3.fromRGB(0, 255, 0),
+            Transparency = 1,
+            ZIndex = 2,
             Visible = false
         }),
 
@@ -62,13 +70,19 @@ local function Create(player)
             Size = 13,
             Center = true,
             Outline = true,
+            OutlineColor = Color3.fromRGB(0, 0, 0),
+            Font = 2,
             Color = Color3.fromRGB(255, 255, 255),
+            Transparency = 1,
+            ZIndex = 3,
             Visible = false
         }),
 
         Tracer = NewDrawing("Line", {
             Thickness = 1,
             Color = Color3.fromRGB(255, 255, 255),
+            Transparency = 1,
+            ZIndex = 1,
             Visible = false
         }),
 
@@ -77,6 +91,8 @@ local function Create(player)
             Thickness = 1,
             Filled = false,
             Color = Color3.fromRGB(255, 255, 255),
+            Transparency = 1,
+            ZIndex = 2,
             Visible = false
         })
     }
