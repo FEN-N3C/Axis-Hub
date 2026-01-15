@@ -53,6 +53,10 @@ local function IsAlive(character)
     return hum and hum.Health > 0
 end
 
+local function HasForceField(character)
+    return character:FindFirstChildOfClass("ForceField") ~= nil
+end
+
 local function IsFriend(player)
     return LocalPlayer:IsFriendsWith(player.UserId)
 end
@@ -122,6 +126,10 @@ local function GetClosestTarget(Config)
         if not part then continue end
 
         if Config.WallCheck and not IsVisible(part, char) then
+            continue
+        end
+
+        if Config.ForceFieldCheck and HasForceField(char) then
             continue
         end
 
