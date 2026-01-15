@@ -1,200 +1,156 @@
+-- esp.lua
 local ESP = {}
-
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
 local LocalPlayer = Players.LocalPlayer
+local Cache = {}
 
--- Drawing cache
-local Objects = {}
+-- Create or get drawing objects for a player
+local function getCache(player)
+    if not Cache[player] then
+        Cache[player] = {}
+        local c = Cache[player]
 
--- ===== UTIL =====
+        c.Box = Drawing.new("Square")
+        c.Box.Thickness = 1
+        c.Box.Filled = false
+        c.Box.Color = Color3.new(1,1,1)
+        c.Box.Transparency = 1
 
-local function NewDrawing(type, props)
-    local obj = Drawing.new(type)
-    for k, v in pairs(props) do
-        obj[k] = v
+        c.Name = Drawing.new("Text")
+        c.Name.Center = true
+        c.Name.Outline = true
+        c.Name.Color = Color3.new(1,1,1)
+        c.Name.Transparency = 1
+
+        c.Health = Drawing.new("Line")
+        c.Health.Thickness = 2
+        c.Health.Transparency = 1
+
+        c.Distance = Drawing.new("Text")
+        c.Distance.Center = true
+        c.Distance.Outline = true
+        c.Distance.Color = Color3.new(1,1,1)
+        c.Distance.Transparency = 1
+
+        c.Tracer = Drawing.new("Line")
+        c.Tracer.Thickness = 1
+        c.Tracer.Transparency = 1
+
+        c.HeadDot = Drawing.new("Circle")
+        c.HeadDot.Thickness = 1
+        c.HeadDot.Radius = 6
+        c.HeadDot.Filled = false
+        c.HeadDot.Transparency = 1
     end
-    return obj
+    return Cache[player]
 end
 
-local function Clear(player)
-    if Objects[player] then
-        for _, obj in pairs(Objects[player]) do
-            obj:Remove()
-        end
-        Objects[player] = nil
+-- Hide all drawings
+local function hideAll(player)
+    local c = Cache[player]
+    if not c then return end
+    for _, obj in pairs(c) do
+        obj.Visible = false
     end
 end
-
-local function CharacterAlive(char)
-    local hum = char:FindFirstChildOfClass("Humanoid")
-    return hum and hum.Health > 0
-end
-
--- ===== CREATE ESP =====
-
-local function Create(player)
-    Objects[player] = {
-        Box = NewDrawing("Square", {
-            Thickness = 1,
-            Filled = false,
-            Color = Color3.fromRGB(255, 255, 255),
-            Transparency = 1,
-            ZIndex = 2,
-            Visible = false
-        }),
-
-        Name = NewDrawing("Text", {
-            Size = 13,
-            Center = true,
-            Outline = true,
-            OutlineColor = Color3.fromRGB(0, 0, 0),
-            Font = 2,
-            Color = Color3.fromRGB(255, 255, 255),
-            Transparency = 1,
-            ZIndex = 3,
-            Visible = false
-        }),
-
-        HealthBar = NewDrawing("Line", {
-            Thickness = 2,
-            Color = Color3.fromRGB(0, 255, 0),
-            Transparency = 1,
-            ZIndex = 2,
-            Visible = false
-        }),
-
-        Distance = NewDrawing("Text", {
-            Size = 13,
-            Center = true,
-            Outline = true,
-            OutlineColor = Color3.fromRGB(0, 0, 0),
-            Font = 2,
-            Color = Color3.fromRGB(255, 255, 255),
-            Transparency = 1,
-            ZIndex = 3,
-            Visible = false
-        }),
-
-        Tracer = NewDrawing("Line", {
-            Thickness = 1,
-            Color = Color3.fromRGB(255, 255, 255),
-            Transparency = 1,
-            ZIndex = 1,
-            Visible = false
-        }),
-
-        Head = NewDrawing("Circle", {
-            Radius = 6,
-            Thickness = 1,
-            Filled = false,
-            Color = Color3.fromRGB(255, 255, 255),
-            Transparency = 1,
-            ZIndex = 2,
-            Visible = false
-        })
-    }
-end
-
--- ===== UPDATE LOOP =====
 
 function ESP.Start(Config)
     RunService.RenderStepped:Connect(function()
-        for _, player in ipairs(Players:GetPlayers()) do
+        for _, player in pairs(Players:GetPlayers()) do
             if player == LocalPlayer then
+                hideAll(player)
                 continue
             end
 
             local char = player.Character
-            if not char or not CharacterAlive(char) then
-                Clear(player)
+            if not char or not char.Parent or (char:FindFirstChildOfClass("Humanoid") and char:FindFirstChildOfClass("Humanoid").Health <= 0) then
+                hideAll(player)
                 continue
-            end
-
-            if not Objects[player] then
-                Create(player)
-            end
-
-            -- If ESP is disabled, just hide everything
-            if not Config.ESPEnabled then
-                for _, obj in pairs(Objects[player]) do
-                    obj.Visible = false
-                end
-                continue
-            end
-
-            if not Objects[player] then
-                Create(player)
             end
 
             local root = char:FindFirstChild("HumanoidRootPart")
             local head = char:FindFirstChild("Head")
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if not root or not head or not hum then
-                Clear(player)
+            if not root or not head then
+                hideAll(player)
                 continue
             end
 
-            local rootPos, onScreen = Camera:WorldToViewportPoint(root.Position)
-            local headPos = Camera:WorldToViewportPoint(head.Position)
+            local rootPos, rootOnScreen = Camera:WorldToViewportPoint(root.Position)
+            local headPos, headOnScreen = Camera:WorldToViewportPoint(head.Position + Vector3.new(0,1,0))
 
-            if not onScreen then
-                for _, obj in pairs(Objects[player]) do
-                    obj.Visible = false
-                end
+            if not rootOnScreen and not headOnScreen then
+                hideAll(player)
                 continue
             end
 
-            local height = math.clamp((rootPos.Y - headPos.Y) * 2, 2, 300)
-            local width = height / 1.5
-            local x = rootPos.X - width / 2
-            local y = headPos.Y
+            local draw = getCache(player)
 
             -- BOX
-            local box = Objects[player].Box
-            box.Visible = Config.ESPBoxes
-            box.Position = Vector2.new(x, y)
-            box.Size = Vector2.new(width, height)
+            if Config.ESPEnabled and Config.ESPBoxes then
+                local height = math.clamp((rootPos.Y - headPos.Y) * 2, 0, 300)
+                draw.Box.Size = Vector2.new(height/1.5, height)
+                draw.Box.Position = Vector2.new(rootPos.X - height/3, headPos.Y)
+                draw.Box.Visible = true
+            else
+                draw.Box.Visible = false
+            end
 
             -- NAME
-            local name = Objects[player].Name
-            name.Visible = Config.ESPNames
-            name.Text = player.Name
-            name.Position = Vector2.new(rootPos.X, y - 14)
+            if Config.ESPEnabled and Config.ESPNames then
+                draw.Name.Text = player.Name
+                draw.Name.Position = Vector2.new(rootPos.X, headPos.Y - 14)
+                draw.Name.Visible = true
+            else
+                draw.Name.Visible = false
+            end
 
-            -- HEALTHBAR
-            local hb = Objects[player].HealthBar
-            hb.Visible = Config.ESPHealthbars
-            local hp = hum.Health / hum.MaxHealth
-            hb.From = Vector2.new(x - 4, y + height)
-            hb.To = Vector2.new(x - 4, y + height - (height * hp))
-            hb.Color = Color3.fromRGB(255 * (1 - hp), 255 * hp, 0)
+            -- HEALTH BAR
+            if Config.ESPEnabled and Config.ESPHealthbars then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    local hpPercent = hum.Health / hum.MaxHealth
+                    draw.Health.From = Vector2.new(rootPos.X - 4, rootPos.Y + 20)
+                    draw.Health.To = Vector2.new(rootPos.X - 4, rootPos.Y + 20 - (40 * hpPercent))
+                    draw.Health.Color = Color3.new(1-hpPercent, hpPercent, 0)
+                    draw.Health.Visible = true
+                else
+                    draw.Health.Visible = false
+                end
+            else
+                draw.Health.Visible = false
+            end
 
             -- DISTANCE
-            local dist = Objects[player].Distance
-            dist.Visible = Config.ESPDistance
-            local studs = math.floor((Camera.CFrame.Position - root.Position).Magnitude)
-            dist.Text = studs .. " studs"
-            dist.Position = Vector2.new(rootPos.X, y + height + 2)
+            if Config.ESPEnabled and Config.ESPDistance then
+                local dist = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - root.Position).Magnitude)
+                draw.Distance.Text = dist .. " studs"
+                draw.Distance.Position = Vector2.new(rootPos.X, rootPos.Y + 25)
+                draw.Distance.Visible = true
+            else
+                draw.Distance.Visible = false
+            end
 
-            -- TRACER
-            local tracer = Objects[player].Tracer
-            tracer.Visible = Config.ESPTracers
-            tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
-            tracer.To = Vector2.new(rootPos.X, rootPos.Y)
+            -- TRACERS
+            if Config.ESPEnabled and Config.ESPTracers then
+                draw.Tracer.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y)
+                draw.Tracer.To = Vector2.new(rootPos.X, rootPos.Y)
+                draw.Tracer.Visible = true
+            else
+                draw.Tracer.Visible = false
+            end
 
             -- HEADBOX
-            local headbox = Objects[player].Head
-            headbox.Visible = Config.ESPHeadbox
-            headbox.Position = Vector2.new(headPos.X, headPos.Y)
+            if Config.ESPEnabled and Config.ESPHeadbox then
+                draw.HeadDot.Position = Vector2.new(headPos.X, headPos.Y)
+                draw.HeadDot.Visible = true
+            else
+                draw.HeadDot.Visible = false
+            end
         end
     end)
-    Players.PlayerRemoving:Connect(function(player)
-    Clear(player)
-end)
-
 end
 
 return ESP
