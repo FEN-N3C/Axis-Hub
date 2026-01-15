@@ -90,9 +90,16 @@ function ESP.Start(Config)
 
             -- BOX
             if Config.ESPEnabled and Config.ESPBoxes then
-                local height = math.clamp((rootPos.Y - headPos.Y) * 2, 0, 300)
-                draw.Box.Size = Vector2.new(height/1.5, height)
-                draw.Box.Position = Vector2.new(rootPos.X - height/3, headPos.Y)
+                local distance = (Camera.CFrame.Position - root.Position).Magnitude
+
+                -- Scale box inversely with distance
+                local scale = math.clamp(1 / distance * 1000, 0.8, 3)
+
+                local height = math.clamp((rootPos.Y - headPos.Y) * 2 * scale, 20, 350)
+                local width = height / 1.6
+
+                draw.Box.Size = Vector2.new(width, height)
+                draw.Box.Position = Vector2.new(rootPos.X - width / 2, headPos.Y)
                 draw.Box.Visible = true
             else
                 draw.Box.Visible = false
@@ -111,10 +118,20 @@ function ESP.Start(Config)
             if Config.ESPEnabled and Config.ESPHealthbars then
                 local hum = char:FindFirstChildOfClass("Humanoid")
                 if hum then
-                    local hpPercent = hum.Health / hum.MaxHealth
-                    draw.Health.From = Vector2.new(rootPos.X - 4, rootPos.Y + 20)
-                    draw.Health.To = Vector2.new(rootPos.X - 4, rootPos.Y + 20 - (40 * hpPercent))
-                    draw.Health.Color = Color3.new(1-hpPercent, hpPercent, 0)
+                    local hpPercent = math.clamp(hum.Health / hum.MaxHealth, 0, 1)
+
+                    local barHeight = draw.Box.Size.Y
+                    local barX = draw.Box.Position.X - 6
+                    local barTop = draw.Box.Position.Y
+                    local barBottom = barTop + barHeight
+
+                    draw.Health.From = Vector2.new(barX, barBottom)
+                    draw.Health.To = Vector2.new(
+                        barX,
+                        barBottom - (barHeight * hpPercent)
+                    )
+
+                    draw.Health.Color = Color3.new(1 - hpPercent, hpPercent, 0)
                     draw.Health.Visible = true
                 else
                     draw.Health.Visible = false
@@ -122,7 +139,7 @@ function ESP.Start(Config)
             else
                 draw.Health.Visible = false
             end
-
+                
             -- DISTANCE
             if Config.ESPEnabled and Config.ESPDistance then
                 local dist = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - root.Position).Magnitude)
@@ -152,5 +169,15 @@ function ESP.Start(Config)
         end
     end)
 end
+
+Players.PlayerRemoving:Connect(function(player)
+    local c = Cache[player]
+    if c then
+        for _, obj in pairs(c) do
+            obj:Remove()
+        end
+        Cache[player] = nil
+    end
+end)
 
 return ESP
